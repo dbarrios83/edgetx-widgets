@@ -117,6 +117,47 @@ Place the widgets in the order specified on the next image. Location details:
 1. Navigate to your SD card's `/WIDGETS/` directory.
 2. Delete the folders corresponding to the widget you wish to remove.
 
+## Testing
+
+This project includes comprehensive testing capabilities that allow you to test widgets without connecting to an actual radio.
+
+### Running Tests
+
+Windows:
+```batch
+tests\run_tests.bat
+```
+
+Linux/Mac:
+```bash
+./tests/run_tests.sh
+```
+
+### Test Documentation
+
+- [tests/README.md](tests/README.md) - Complete testing guide
+- [docs/TESTING.md](docs/TESTING.md) - Detailed testing scenarios
+- [docs/TELEMETRY_GUIDE.md](docs/TELEMETRY_GUIDE.md) - Telemetry variable reference
+- [docs/COMPANION_SIMULATOR_GUIDE.md](docs/COMPANION_SIMULATOR_GUIDE.md) - Companion simulator integration
+
+### Project Structure
+
+```
+edgetx-widgets/
+├── widgets/           # Widget implementations
+│   ├── BattWidget/
+│   ├── ClockWidget/
+│   ├── GPSWidget/
+│   ├── ModelWidget/
+│   ├── RXWidget/
+│   ├── SimModel/
+│   └── SimStick/
+├── tests/            # Test suite
+│   ├── lua/          # Widget test files (52 tests)
+│   └── utils/        # Testing utilities (telemetry simulator)
+└── docs/             # Documentation
+```
+
 ## Additional Resources
 - [EdgeTX Documentation](https://manual.edgetx.org)
 - [EdgeTX GitHub](https://github.com/EdgeTX)
