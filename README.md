@@ -17,14 +17,14 @@ EdgeTX widgets enhance the functionality of your transmitter, allowing you to cu
 ## Installation Steps
 
 ### 1. Download the Widgets
-1. The available widgets are: **BattWidget**, **ClockWidget**, **Dashboard**, **GPSWidget**, **ModelWidget**, **RXWidget**, **SimModel**, and **SimStick**.
+1. The available widgets are: **BattWidget**, **Dashboard**, **GPSWidget**, **RXWidget**, and **SimWidget**.
 2. Download the widget folders you need.
 3. **IMPORTANT**: Also download the **common** folder, which contains shared utilities required by all widgets.
 
 ### 2. Copy Folders to the SD Card
 1. Insert the SD card from your transmitter into your computer.
 2. Navigate to the `/WIDGETS/` directory on the SD card.
-3. Copy the widget folders you need (e.g., `BattWidget`, `ClockWidget`, etc.).
+3. Copy the widget folders you need (e.g., `BattWidget`, `Dashboard`, etc.).
 4. **REQUIRED**: Copy the **common** folder to `/WIDGETS/common/`. This folder must be present for any widget to function properly.
 
 ### 3. Bind a Drone and Discover Sensors
@@ -81,22 +81,19 @@ Place the widgets in the order specified on the next image. Location details:
 
 For the ELRS Receiver model, configure the following widgets:
 
-1. **ModelWidget**
-2. **ClockWidget**
-3. **BattWidget**
-4. **RXWidget**
-5. **GPSWidget**
+1. **BattWidget**
+2. **RXWidget**
+3. **GPSWidget**
 
 ### Simulator Model
-For the Simulator model, configure the following widgets:
+For the Simulator model, configure the following widget:
 
 ### Widget Locations
-Place the widgets in the order specified on the next image. Location details:
+Place the widget in the order specified on the next image. Location details:
 
 ![Widget Locations](/docs/img/widget_layout_sim.jpg)
 
-1. **SimModel**
-2. **SimStickLayout**
+1. **SimWidget** - Unified widget combining model info, battery, date/time, timers, and stick visualization
 
 ### Steps to Configure a New Model
 
@@ -112,7 +109,7 @@ Place the widgets in the order specified on the next image. Location details:
 
 3. **Assign Widgets**:
    - For each widget slot, select the widget you want to assign (e.g., `ModelWidget`, `ClockWidget`, `BattWidget`, `RXWidget`, `GPSWidget` for ELRS model or `SimModel`, `SimStickLayout` for Simulator model).
-   - Configure the widget options as needed.
+   - Configure the widget options as needed.Widge
 
 4. **Save and Test**:
    - Exit the configuration menu and ensure the widgets display or function as expected.
@@ -164,15 +161,14 @@ edgetx-widgets/
 ├── widgets/           # Widget implementations
 │   ├── BattWidget/
 │   ├── ClockWidget/
-│   ├── common/       # Shared utilities (REQUIRED)
+│   ├── common/        # Shared utilities (REQUIRED)
 │   ├── Dashboard/
 │   ├── GPSWidget/
 │   ├── ModelWidget/
 │   ├── RXWidget/
-│   ├── SimModel/
-│   └── SimStick/
-├── tests/            # Test suite
-│   ├── lua/          # Widget test files (52 tests)
+│   └── SimWidget/
+├── tests/             # Test suite
+│   ├── lua/          # Widget test files
 │   └── utils/        # Testing utilities (telemetry simulator)
 └── docs/             # Documentation
 ```

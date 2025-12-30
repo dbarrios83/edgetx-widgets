@@ -55,22 +55,21 @@ The Dashboard widget includes several configurable options:
 ## Installation
 
 1. Copy the `Dashboard` folder to `/WIDGETS/` on your SD card
-2. **REQUIRED**: Copy the `common` folder to `/WIDGETS/common/` (contains shared utilities)
-3. The Dashboard widget requires the following icon assets from other widgets:
-   - `/WIDGETS/BattWidget/BMP/battery-*.png` (battery icons)
-   - `/WIDGETS/ClockWidget/BMP/connection-*.png` (connection icons)
-   - `/WIDGETS/GPSWidget/BMP/satellite-*.png` (GPS icons)
+2. **REQUIRED**: Copy the `common` folder to `/WIDGETS/common/` (contains shared utilities and icons)
+3. The Dashboard widget uses centralized icon assets from:
+   - `/WIDGETS/common/icons/battery-*.png` (battery icons)
+   - `/WIDGETS/common/icons/connection-*.png` (connection icons)
+   - `/WIDGETS/common/icons/satellite-*.png` (GPS icons)
 
 ### Full Installation
 
 For the Dashboard widget to work properly with all features, ensure you have these folders on your SD card:
 ```
 /WIDGETS/
-├── common/          # REQUIRED - shared utilities
-├── Dashboard/       # The Dashboard widget
-├── BattWidget/      # For battery icons
-├── ClockWidget/     # For connection icons
-└── GPSWidget/       # For GPS satellite icons
+├── common/          # REQUIRED - shared utilities and icons
+│   ├── utils.lua
+│   └── icons/       # Battery, connection, and GPS icons
+└── Dashboard/       # The Dashboard widget
 ```
 
 ## Usage
@@ -109,8 +108,8 @@ The Dashboard uses intelligent positioning to prevent overlaps:
 
 ## Compatibility
 
-- **Tested with**: EdgeTX 2.10.5 and 2.11.1
-- **Screen**: Designed for 480×272 color screens (RadioMaster TX16S, Jumper T16, etc.)
+- **Tested with**: EdgeTX 2.10.5, 2.11.1, and 3.0.0
+- **Screen**: Designed for 480×272 and 480×320 color screens (RadioMaster TX16S, TX15, Jumper T15, etc.)
 - **Dependencies**: Requires the `common/utils.lua` shared library
 
 ## Telemetry Caching

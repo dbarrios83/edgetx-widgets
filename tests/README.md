@@ -19,10 +19,7 @@ tests/
 │   ├── test_battwidget.lua    # BattWidget tests (12 tests)
 │   ├── test_rxwidget.lua      # RXWidget tests (5 scenarios)
 │   ├── test_gpswidget.lua     # GPSWidget tests (6 scenarios)
-│   ├── test_clockwidget.lua   # ClockWidget tests (7 scenarios)
-│   ├── test_modelwidget.lua   # ModelWidget tests (7 tests)
-│   ├── test_simmodel.lua      # SimModel tests (6 tests)
-│   ├── test_simstick.lua      # SimStick tests (9 tests)
+│   ├── test_simwidget.lua     # SimWidget tests (10 tests)
 │   ├── test_structure.lua     # Path validation test
 │   └── setup.lua              # Lua path configuration
 ├── utils/            # Testing utilities
@@ -53,15 +50,12 @@ From the `tests/lua/` directory:
 lua test_battwidget.lua   # BattWidget battery, power, and lifecycle tests
 lua test_rxwidget.lua     # RXWidget receiver signal tests
 lua test_gpswidget.lua    # GPSWidget GPS lock and location tests
-lua test_clockwidget.lua  # ClockWidget time display tests
-lua test_modelwidget.lua  # ModelWidget TX battery and stick tests
-lua test_simmodel.lua     # SimModel simulator mode tests
-lua test_simstick.lua     # SimStick visual stick display tests
+lua test_simwidget.lua    # SimWidget unified widget tests
 ```
 
 ## Test Coverage
 
-### 52 Total Tests:
+### 32 Total Tests:
 
 1. **BattWidget** (12 tests):
    - Module structure validation
@@ -92,42 +86,16 @@ lua test_simstick.lua     # SimStick visual stick display tests
    - Initializing (2 satellites)
    - Lost lock with last position
 
-4. **ClockWidget** (7 scenarios):
-   - 24-hour format
-   - 12-hour AM format
-   - 12-hour PM format
-   - ISO 8601 timestamp
-   - No RX connection (black indicator)
-   - Critical signal loss (red indicator)
-   - Timer display
-
-5. **ModelWidget** (7 tests):
-   - Module structure validation
-   - Widget creation
-   - Normal flight (TX battery good)
-   - Low TX battery warning
-   - Full throttle position
-   - All sticks centered
-   - Maximum stick deflection
-
-6. **SimModel** (6 tests):
+4. **SimWidget** (9 tests):
    - Module structure validation
    - Widget creation with options
-   - Simulator display
-   - ISO 8601 timestamp mode
-   - Timer display mode
+   - Model info display
+   - Battery display with icon
+   - Date and time display (24-hour format)
+   - Date and time display (12-hour format)
+   - Stick chart visualization (left and right sticks)
    - Low TX battery warning
-
-7. **SimStick** (9 tests):
-   - Module structure validation
-   - Widget creation (simulator detection)
-   - All sticks centered
-   - Full throttle position
-   - Full aileron right
-   - Full elevator up
-   - Full rudder left
-   - Alternative layout (values down)
-   - Alternative layout (sticks out)
+   - OS version display
 
 ## How It Works
 

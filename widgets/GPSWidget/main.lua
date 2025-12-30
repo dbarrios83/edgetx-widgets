@@ -73,7 +73,7 @@ local function drawGpsTelemetry(widget)
     local latStr, lonStr = formatLatLon(widget.gpsLAT, widget.gpsLON)
 
     if widget.isGPSValid then
-        local iconPath = "/WIDGETS/GPSWidget/BMP/satellite-%s.png"
+        local iconPath = "/WIDGETS/common/icons/satellite-%s.png"
         local icon = Bitmap.open(string.format(iconPath, utils.satIconColor(widget.gpsSATS)))
         lcd.drawBitmap(icon, xRight-22, yStart)
         lcd.drawText(xRight - 35, yStart + 2, string.format("Sats: %d", widget.gpsSATS), textStyle  + MIDSIZE)

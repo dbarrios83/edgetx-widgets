@@ -49,7 +49,7 @@ end
 
 local function create(zone, options)
   -- Preload icons once during widget creation
-  local iconPath = "/WIDGETS/BattWidget/BMP/battery-%s.png"
+  local iconPath = "/WIDGETS/common/icons/battery-%s.png"
   local icons = {
     dead = Bitmap.open(string.format(iconPath, "dead")),
     low = Bitmap.open(string.format(iconPath, "low")),

@@ -12,9 +12,9 @@ local options = {
 }
 
 local function create(zone, options)
-  local battIconPath = "/WIDGETS/BattWidget/BMP/battery-%s.png"
-  local connIconPath = "/WIDGETS/ClockWidget/BMP/connection-%s.png"
-  local satIconPath  = "/WIDGETS/GPSWidget/BMP/satellite-%s.png"
+  local battIconPath = "/WIDGETS/common/icons/battery-%s.png"
+  local connIconPath = "/WIDGETS/common/icons/connection-%s.png"
+  local satIconPath  = "/WIDGETS/common/icons/satellite-%s.png"
 
   local icons = {
     dead   = utils.safeOpen(string.format(battIconPath, "dead")),
@@ -162,11 +162,13 @@ local function drawRxBatteryBelowLq(widget, xCenter, yStart, tlm, rightColLeft)
 end
 
 local function drawSatsBelowRx(widget, xCenter, yStart, tlm, rightColLeft)
-  local gpsValue = getValue("GPS")
   local sats = (tlm and tonumber(tlm.sats)) or 0
+  local gpsValue = getValue("GPS")
   local latVal = (type(gpsValue) == "table" and gpsValue.lat) or 0
   local lonVal = (type(gpsValue) == "table" and gpsValue.lon) or 0
-  local isValid = (type(gpsValue) == "table") and latVal ~= 0 and lonVal ~= 0
+  
+  -- GPS is valid if we have a GPS table (GPS module is present)
+  local isValid = (type(gpsValue) == "table")
 
   if isValid then
     widget.gpsLat = latVal
@@ -208,7 +210,7 @@ local function drawRxDetailGrid(widget, z, yTop, tlm)
   local curr  = (tlm and tlm.curr) or 0
   local capa  = (tlm and tlm.capa) or 0
 
-  local fmodeStr = utils.getFlightModeName(fmode)
+  local fmodeStr = tostring(fmode)
   local rfmdStr  = utils.getRFMDString(rfmd)
 
   local leftMargin  = z.x + 5
@@ -245,7 +247,6 @@ end
 -- -----------------------
 local function drawGpsCoordinates(widget, yTop)
   if not widget then return end
-  if (widget.gpsLat == 0 and widget.gpsLon == 0) then return end
 
   local z = widget.zone or { x = 0, y = 0, w = 320, h = 240 }
   local cx = (z.x or 0) + math.floor((z.w or 320) / 2)
@@ -305,11 +306,11 @@ local function updateTelemetryCache(widget, tpwr, justConnected, justDisconnecte
   widget.tlm.rssi1 = tonumber(getValue("1RSS")) or 0
   widget.tlm.rssi2 = tonumber(getValue("2RSS")) or 0
   widget.tlm.ant   = tonumber(getValue("ANT")) or 0
-  widget.tlm.fmode = tonumber(getValue("FM")) or 0
+  widget.tlm.fmode = getValue("FM") or 0
   widget.tlm.tpwr  = tpwr
   widget.tlm.curr  = tonumber(getValue("Curr")) or 0
   widget.tlm.capa  = tonumber(getValue("Capa")) or 0
-  widget.tlm.sats  = tonumber(getValue("Sats")) or 0
+    widget.tlm.sats  = tonumber(getValue("Sats")) or 0
   widget.tlm.rxbt  = tonumber(getValue("RxBt")) or 0
   widget.tlm.rqly  = tonumber(getValue("RQly")) or 0
 end

@@ -190,16 +190,6 @@ end
 -- Misc telemetry formatting
 -- =========================
 
-function utils.getFlightModeName(fmode)
-  if model and model.getFlightMode then
-    local fm = model.getFlightMode(fmode)
-    if fm and fm.name and fm.name ~= "" then
-      return fm.name
-    end
-  end
-  return tostring(fmode)
-end
-
 function utils.getRFMDString(rfmd)
   local rfModes = {"", "25Hz", "50Hz", "100Hz", "100HzF", "150Hz", "200Hz", "250Hz", "333HzF", "500Hz", "D250", "D500", "F500", "F1000"}
   return (rfModes and rfModes[(rfmd or 0) + 1]) or tostring(rfmd or 0)
