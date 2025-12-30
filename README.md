@@ -19,13 +19,17 @@ EdgeTX widgets enhance the functionality of your transmitter, allowing you to cu
 ### 1. Download the Widgets
 1. The available widgets are: **BattWidget**, **Dashboard**, **GPSWidget**, **RXWidget**, and **SimWidget**.
 2. Download the widget folders you need.
-3. **IMPORTANT**: Also download the **common** folder, which contains shared utilities required by all widgets.
+3. **IMPORTANT**: Also download the **common** folder, which contains:
+   - Shared utilities (`utils.lua`) required by all widgets
+   - Icon assets (`icons/` folder) used by the widgets
 
 ### 2. Copy Folders to the SD Card
 1. Insert the SD card from your transmitter into your computer.
 2. Navigate to the `/WIDGETS/` directory on the SD card.
 3. Copy the widget folders you need (e.g., `BattWidget`, `Dashboard`, etc.).
-4. **REQUIRED**: Copy the **common** folder to `/WIDGETS/common/`. This folder must be present for any widget to function properly.
+4. **REQUIRED**: Copy the **common** folder to `/WIDGETS/common/`. This folder must be present with both:
+   - `utils.lua` - Shared utility functions
+   - `icons/` - Icon assets (battery, connection, GPS satellite icons)
 
 ### 3. Bind a Drone and Discover Sensors
 1. Before setting up all the widgets, bind a drone (preferably with GPS) to your transmitter.
