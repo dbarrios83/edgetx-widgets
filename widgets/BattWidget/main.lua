@@ -1,29 +1,17 @@
 -- Battery Widget Optimized with Preloading and Destroy
+local utils = loadScript("/WIDGETS/common/utils.lua")()
 local textStyle = RIGHT + WHITE + SHADOWED
 local midLineHeight = 33
 local lineHeight = 18
 
-local function getVoltagePerCell(rxBt)
-  local maxCellVoltage = 4.35
-  local minCellVoltage = 3.0
-
-  if rxBt > 5 then
-    local estimatedCellCount = math.floor(rxBt / maxCellVoltage) + 1
-    local averageVoltagePerCell = rxBt / estimatedCellCount
-
-    if averageVoltagePerCell >= minCellVoltage and averageVoltagePerCell <= maxCellVoltage then
-      return averageVoltagePerCell, estimatedCellCount
-    end
-  end
-  return rxBt, 1
-end
+-- Use shared helper from utils
 
 local function drawBatteryTelemetry(widget)
   local xRight = widget.zone.x + widget.zone.w - 10
   local yStart = widget.zone.y + 15
 
   local totalBatt = tonumber(getValue("RxBt")) or 0
-  local voltagePerCell, cellCount = getVoltagePerCell(totalBatt)
+  local voltagePerCell, cellCount = utils.getVoltagePerCell(totalBatt)
   local rxBt = tonumber(voltagePerCell) or 0
 
   local curr = tonumber(getValue("Curr")) or 0

@@ -17,13 +17,15 @@ EdgeTX widgets enhance the functionality of your transmitter, allowing you to cu
 ## Installation Steps
 
 ### 1. Download the Widgets
-1. The widgets required are: BattWidget, ModelWidget, TXWidget, ClockWidget, and GPSWidget.
-2. Download all the folders.
+1. The available widgets are: **BattWidget**, **ClockWidget**, **Dashboard**, **GPSWidget**, **ModelWidget**, **RXWidget**, **SimModel**, and **SimStick**.
+2. Download the widget folders you need.
+3. **IMPORTANT**: Also download the **common** folder, which contains shared utilities required by all widgets.
 
 ### 2. Copy Folders to the SD Card
 1. Insert the SD card from your transmitter into your computer.
-2. Navigate to the root directory on the SD card:
-3. Inside the folder `/WIDGETS/`, copy all 5 folders.
+2. Navigate to the `/WIDGETS/` directory on the SD card.
+3. Copy the widget folders you need (e.g., `BattWidget`, `ClockWidget`, etc.).
+4. **REQUIRED**: Copy the **common** folder to `/WIDGETS/common/`. This folder must be present for any widget to function properly.
 
 ### 3. Bind a Drone and Discover Sensors
 1. Before setting up all the widgets, bind a drone (preferably with GPS) to your transmitter.
@@ -46,7 +48,7 @@ EdgeTX widgets enhance the functionality of your transmitter, allowing you to cu
 The widgets are arranged on the transmitter’s screen using this layout and screen configuration.
 Below is an example layout:
 
-![View Layout Example](/widgets/img/screen_config.jpeg)
+![View Layout Example](/docs/img/screen_config.jpeg)
 
 
 
@@ -55,12 +57,27 @@ Below is an example layout:
 
 ## Configuring Models with Different Layouts
 
+### Dashboard Widget (Full-Screen Option)
+
+The **Dashboard** widget provides a comprehensive, full-screen view combining multiple telemetry elements:
+- Model name and TX battery status
+- Connection status and link quality
+- RX battery with cell count detection
+- GPS satellite count and coordinates
+- Flight mode, RF mode, power, current, capacity, RSSI, antenna
+- Date/time with configurable 12/24-hour format
+- Up to 3 timers
+- Stick positions visualization
+- EdgeTX version display
+
+This widget is ideal for users who want all critical information in one place without managing multiple widgets.
+
 ### ELRS Model
 
 ### Widget Locations
 Place the widgets in the order specified on the next image. Location details:
 
-![Widget Locations](/widgets/img/widget_layout.jpg)
+![Widget Locations](/docs/img/widget_layout.jpg)
 
 For the ELRS Receiver model, configure the following widgets:
 
@@ -76,7 +93,7 @@ For the Simulator model, configure the following widgets:
 ### Widget Locations
 Place the widgets in the order specified on the next image. Location details:
 
-![Widget Locations](/widgets/img/widget_layout_sim.jpg)
+![Widget Locations](/docs/img/widget_layout_sim.jpg)
 
 1. **SimModel**
 2. **SimStickLayout**
@@ -147,6 +164,8 @@ edgetx-widgets/
 ├── widgets/           # Widget implementations
 │   ├── BattWidget/
 │   ├── ClockWidget/
+│   ├── common/       # Shared utilities (REQUIRED)
+│   ├── Dashboard/
 │   ├── GPSWidget/
 │   ├── ModelWidget/
 │   ├── RXWidget/

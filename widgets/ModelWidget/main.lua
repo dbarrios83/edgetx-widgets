@@ -83,6 +83,18 @@ local function drawModelInfo ()
 
 end
 
+-- Draw OS version in bottom-right corner
+local function drawOsVersionBottomRight(widget)
+  local z = (widget and widget.zone) or { x = 0, y = 0, w = 320, h = 240 }
+  local xRight = z.x + z.w - 5
+  local yBottom = z.y + z.h - 12
+
+  local _, _, major, minor, rev, osname = getVersion()
+  local strVer = (osname or "EdgeTX") .. " " .. major .. "." .. minor .. "." .. rev
+
+  lcd.drawText(xRight, yBottom, strVer, WHITE + RIGHT + SHADOWED + SMLSIZE)
+end
+
 local function refresh(widget, event, touchState)
 
   drawBattery()
@@ -90,6 +102,8 @@ local function refresh(widget, event, touchState)
   drawModelInfo()
 
   drawSticks ()
+
+  drawOsVersionBottomRight(widget)
 
 end
 

@@ -1,32 +1,10 @@
 
 -- Constants
+local utils = loadScript("/WIDGETS/common/utils.lua")()
+
 local textStyle = RIGHT + WHITE + SHADOWED
 local lineHeight = 18
-local months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
 local iconPathFmt = "/WIDGETS/ClockWidget/BMP/connection-%s.png"
-
--- Function to format time string
-local function getFormattedTime(datetime, is24Hour)
-  local hour = datetime.hour
-  local amPm = ""
-
-  if not is24Hour then
-    if hour == 0 then
-      hour = 12
-      amPm = " AM"
-    elseif hour == 12 then
-      amPm = " PM"
-    elseif hour > 12 then
-      hour = hour - 12
-      amPm = " PM"
-    else
-      amPm = " AM"
-    end
-  end
-
-  return string.format("%02d:%02d%s", hour, datetime.min, is24Hour and "" or amPm)
-end
 
 -- get timers and draw them unless mode == 'off'
 local function drawTimer(i, x, y, style)
@@ -89,8 +67,8 @@ local function refresh(widget, event, touchState)
   end
 
   local is24Hour = widget.cfg.Format24H == 1
-  local timeStr = getFormattedTime(datetime, is24Hour)
-  local dateStr = string.format("%02d %s", datetime.day, months[datetime.mon] or "???")
+  local timeStr = utils.getFormattedTime(datetime, is24Hour)
+  local dateStr = string.format("%02d %s", datetime.day, utils.months[datetime.mon] or "???")
   local isoStr = string.format("%04d-%02d-%02d %02d:%02d", datetime.year, datetime.mon, datetime.day, datetime.hour, datetime.min)
 
   local xRight = widget.zone.x + widget.zone.w - 10

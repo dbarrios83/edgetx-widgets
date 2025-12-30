@@ -1,4 +1,5 @@
 -- Widget LUA Script: GPS Widget
+local utils = loadScript("/WIDGETS/common/utils.lua")()
 -- Displays satellite count, latitude, and longitude with small text aligned to the right
 -- Includes color-coded satellite count and satellite icon
 
@@ -35,21 +36,7 @@ end
 
 
 -- Function to draw the satellite icon based on the satellite count
-local function getIconColor(gpsSATS)   
-    local iconColor
-    if gpsSATS <= 5 then
-        color = RED
-        iconColor = "red"
-    elseif gpsSATS <= 7 then
-        color = YELLOW
-        iconColor = "yellow"
-    else
-        color = GREEN
-        iconColor = "green"
-    end
-
-    return iconColor
-end
+-- Use shared color selection from utils.satIconColor
 
 -- Function to format latitude and longitude
 local function formatLatLon(lat, lon)
@@ -87,7 +74,7 @@ local function drawGpsTelemetry(widget)
 
     if widget.isGPSValid then
         local iconPath = "/WIDGETS/GPSWidget/BMP/satellite-%s.png"
-        local icon = Bitmap.open(string.format(iconPath, getIconColor(widget.gpsSATS)))
+        local icon = Bitmap.open(string.format(iconPath, utils.satIconColor(widget.gpsSATS)))
         lcd.drawBitmap(icon, xRight-22, yStart)
         lcd.drawText(xRight - 35, yStart + 2, string.format("Sats: %d", widget.gpsSATS), textStyle  + MIDSIZE)
 
