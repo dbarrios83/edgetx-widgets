@@ -9,7 +9,7 @@ This directory contains a comprehensive testing framework for EdgeTX widgets usi
 - ✓ No frameworks needed (vanilla Lua only)
 - ✓ Comprehensive telemetry simulation
 - ✓ Complete mock EdgeTX API
-- ✓ **52 tests across 7 widgets**
+- ✓ **63 tests across 5 widgets**
 
 ## Directory Structure
 
@@ -17,9 +17,13 @@ This directory contains a comprehensive testing framework for EdgeTX widgets usi
 tests/
 ├── lua/              # Widget test files
 │   ├── test_battwidget.lua    # BattWidget tests (12 tests)
+│   ├── test_dashboard.lua     # Dashboard tests (11 tests)
 │   ├── test_rxwidget.lua      # RXWidget tests (5 scenarios)
 │   ├── test_gpswidget.lua     # GPSWidget tests (6 scenarios)
-│   ├── test_simwidget.lua     # SimWidget tests (10 tests)
+│   ├── test_simwidget.lua     # SimWidget tests (9 tests)
+│   ├── test_simmodel.lua      # SimModel tests (4 tests)
+│   ├── test_simstick.lua      # SimStick tests (4 tests)
+│   ├── test_teleview.lua      # TeleView tests (16 tests)
 │   ├── test_structure.lua     # Path validation test
 │   └── setup.lua              # Lua path configuration
 ├── utils/            # Testing utilities
@@ -48,14 +52,18 @@ From the `tests/lua/` directory:
 
 ```bash
 lua test_battwidget.lua   # BattWidget battery, power, and lifecycle tests
+lua test_dashboard.lua    # Dashboard full-screen widget tests
 lua test_rxwidget.lua     # RXWidget receiver signal tests
 lua test_gpswidget.lua    # GPSWidget GPS lock and location tests
 lua test_simwidget.lua    # SimWidget unified widget tests
+lua test_simmodel.lua     # SimModel component tests
+lua test_simstick.lua     # SimStick component tests
+lua test_teleview.lua     # TeleView compact display tests
 ```
 
 ## Test Coverage
 
-### 32 Total Tests:
+### 63 Total Tests:
 
 1. **BattWidget** (12 tests):
    - Module structure validation
@@ -71,14 +79,25 @@ lua test_simwidget.lua    # SimWidget unified widget tests
    - High capacity discharge
    - Widget cleanup/destroy
 
-2. **RXWidget** (5 scenarios):
+2. **Dashboard** (11 tests):
+   - Module structure validation
+   - Widget creation with icons
+   - Connection states (no connection, good, fair, poor)
+   - Battery display with cell detection
+   - GPS satellite display
+   - Date/time formatting (12h and 24h)
+   - Timer display
+   - Stick visualization
+   - Complete flight scenario
+
+3. **RXWidget** (5 scenarios):
    - No RX connection (TPWR=0)
    - Good signal (-55dBm)
    - Weak signal (-85dBm)
    - Critical signal loss (-105dBm)
    - Antenna failure (single antenna)
 
-3. **GPSWidget** (6 scenarios):
+4. **GPSWidget** (6 scenarios):
    - Strong GPS lock (16 satellites)
    - Medium lock (9 satellites)
    - Weak lock (4 satellites)
@@ -86,7 +105,7 @@ lua test_simwidget.lua    # SimWidget unified widget tests
    - Initializing (2 satellites)
    - Lost lock with last position
 
-4. **SimWidget** (9 tests):
+5. **SimWidget** (9 tests):
    - Module structure validation
    - Widget creation with options
    - Model info display
@@ -96,6 +115,36 @@ lua test_simwidget.lua    # SimWidget unified widget tests
    - Stick chart visualization (left and right sticks)
    - Low TX battery warning
    - OS version display
+
+6. **SimModel** (4 tests):
+   - Module structure validation
+   - Widget creation
+   - Model name display
+   - TX battery voltage display
+
+7. **SimStick** (4 tests):
+   - Module structure validation
+   - Widget creation
+   - Stick visualization
+   - Stick position accuracy
+
+8. **TeleView** (16 tests):
+   - Module structure validation
+   - Widget creation with GPS tracking
+   - No connection state (black icon, "No RX Telemetry")
+   - Good connection (green icon, LQ ≥80%)
+   - Fair connection (yellow icon, LQ 50-79%)
+   - Poor connection (red icon, LQ <50%)
+   - Multi-cell battery display (4S with voltage per cell)
+   - Single-cell battery display
+   - Low battery warning (yellow icon)
+   - Critical battery state (dead icon)
+   - GPS no satellites (red icon)
+   - GPS acquiring (yellow icon, 5-8 sats)
+   - GPS good lock (green icon, 9+ sats)
+   - GPS module detection (shows "No GPS" when absent)
+   - Last GPS fix display on disconnect
+   - Complete flight scenario (pre-flight → in-flight → warning → landing with GPS coordinates)
 
 ## How It Works
 

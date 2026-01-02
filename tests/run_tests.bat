@@ -11,6 +11,7 @@ if "%1"=="" (
     lua test_rxwidget.lua
     lua test_gpswidget.lua
     lua test_simwidget.lua
+    lua test_teleview.lua
     cd ..
     goto :eof
 )
@@ -24,6 +25,7 @@ if "%1"=="help" (
     echo   rxwidget     - Run RXWidget tests only
     echo   gpswidget    - Run GPSWidget tests only
     echo   simwidget    - Run SimWidget tests only
+    echo   teleview - Run TeleView tests only
     echo   help         - Show this help message
     goto :eof
 )

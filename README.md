@@ -17,11 +17,11 @@ EdgeTX widgets enhance the functionality of your transmitter, allowing you to cu
 ## Installation Steps
 
 ### 1. Download the Widgets
-1. The available widgets are: **BattWidget**, **Dashboard**, **GPSWidget**, **RXWidget**, and **SimWidget**.
+1. The available widgets are: **BattWidget**, **Dashboard**, **GPSWidget**, **RXWidget**, **SimWidget**, and **TeleView**.
 2. Download the widget folders you need.
 3. **IMPORTANT**: Also download the **common** folder, which contains:
    - Shared utilities (`utils.lua`) required by all widgets
-   - Icon assets (`icons/` folder) used by the widgets
+   - Icon assets (`icons/` folder) with battery, connection, and GPS satellite icons
 
 ### 2. Copy Folders to the SD Card
 1. Insert the SD card from your transmitter into your computer.
@@ -75,6 +75,18 @@ The **Dashboard** widget provides a comprehensive, full-screen view combining mu
 - EdgeTX version display
 
 This widget is ideal for users who want all critical information in one place without managing multiple widgets.
+
+### TeleView Widget (Compact Option)
+
+The **TeleView** widget provides a compact, space-efficient telemetry display:
+- Connection icon and link quality percentage
+- RX battery icon and voltage with cell count
+- GPS satellite icon and count
+- "Last GPS fix" display when disconnected (shows last known coordinates)
+- Smart GPS detection (prevents stale data from previous models)
+- No configuration required
+
+This widget is ideal for users who want essential telemetry in a minimal layout, with the bonus of seeing last known GPS position when the connection is lost.
 
 ### ELRS Model
 
@@ -164,13 +176,14 @@ Linux/Mac:
 edgetx-widgets/
 ├── widgets/           # Widget implementations
 │   ├── BattWidget/
-│   ├── ClockWidget/
 │   ├── common/        # Shared utilities (REQUIRED)
+│   │   ├── utils.lua
+│   │   └── icons/     # Shared icon assets
 │   ├── Dashboard/
 │   ├── GPSWidget/
-│   ├── ModelWidget/
 │   ├── RXWidget/
-│   └── SimWidget/
+│   ├── SimWidget/
+│   └── TeleView/
 ├── tests/             # Test suite
 │   ├── lua/          # Widget test files
 │   └── utils/        # Testing utilities (telemetry simulator)

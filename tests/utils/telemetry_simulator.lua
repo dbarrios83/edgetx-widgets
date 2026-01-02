@@ -220,6 +220,12 @@ end
 
 -- Set a specific telemetry value
 function telemetrySimulator:setValue(key, value)
+  -- Special handling for GPS - store directly without validation
+  if key == "GPS" then
+    self.data[key] = value
+    return true, "GPS set"
+  end
+  
   if self.data[key] ~= nil then
     self.data[key] = value
     return true, key .. " set to " .. tostring(value)
