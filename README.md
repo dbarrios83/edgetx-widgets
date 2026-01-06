@@ -67,7 +67,7 @@ The **Dashboard** widget provides a comprehensive, full-screen view combining mu
 - Model name and TX battery status
 - Connection status and link quality
 - RX battery with cell count detection
-- GPS satellite count and coordinates
+- GPS satellite count; coordinates shown only with a valid GPS fix
 - Flight mode, RF mode, power, current, capacity, RSSI, antenna
 - Date/time with configurable 12/24-hour format
 - Up to 3 timers
@@ -87,29 +87,6 @@ The **TeleView** widget provides a compact, space-efficient telemetry display:
 - No configuration required
 
 This widget is ideal for users who want essential telemetry in a minimal layout, with the bonus of seeing last known GPS position when the connection is lost.
-
-### ELRS Model
-
-### Widget Locations
-Place the widgets in the order specified on the next image. Location details:
-
-![Widget Locations](/docs/img/widget_layout.jpg)
-
-For the ELRS Receiver model, configure the following widgets:
-
-1. **BattWidget**
-2. **RXWidget**
-3. **GPSWidget**
-
-### Simulator Model
-For the Simulator model, configure the following widget:
-
-### Widget Locations
-Place the widget in the order specified on the next image. Location details:
-
-![Widget Locations](/docs/img/widget_layout_sim.jpg)
-
-1. **SimWidget** - Unified widget combining model info, battery, date/time, timers, and stick visualization
 
 ### Steps to Configure a New Model
 

@@ -20,7 +20,7 @@ The Dashboard widget provides a complete overview of your flight system:
 - **GPS Satellites**: 
   - Satellite count with color-coded icon
   - "No GPS" or "Last GPS fix" indicators when signal is lost
-  - GPS coordinate display (configurable)
+  - GPS coordinate display (configurable; only shown with a valid fix)
 
 ### Right Column
 - **Date & Time**: Current date and time with configurable format
@@ -32,6 +32,7 @@ The Dashboard widget provides a complete overview of your flight system:
   - Capacity (CAP), Antenna (ANT), RF Mode (RFMD), RSSI2
 - **GPS Coordinates** (when ShowCoordinates enabled):
   - Latitude and longitude in degrees/minutes/seconds format
+  - Shown only when GPS has a valid fix (non-zero lat/lon)
 - **Stick Positions** (when ShowSticks enabled):
   - Visual representation of all 4 stick axes
   - Left stick: Rudder (horizontal) and Throttle (vertical)
@@ -109,7 +110,7 @@ The Dashboard uses intelligent positioning to prevent overlaps:
 ## Compatibility
 
 - **Tested with**: EdgeTX 2.10.5, 2.11.1, and 3.0.0
-- **Screen**: Designed for 480×272 and 480×320 color screens (RadioMaster TX16S, TX15, Jumper T15, etc.)
+- **Screen**: Designed for color-screen radios (TX15, Jumper T15, TX16)
 - **Dependencies**: Requires the `common/utils.lua` shared library
 
 ## Telemetry Caching
@@ -123,16 +124,16 @@ The Dashboard caches telemetry values when connected to prevent flickering and i
 - Use "Discover new sensors" in the Telemetry menu before using the Dashboard
 - Reset telemetry when switching between different aircraft
 - The Dashboard automatically adapts to available telemetry (missing sensors won't cause errors)
-- GPS coordinates persist after signal loss, showing the last known position
+- Coordinates are hidden without a valid fix; center section shows "Last GPS fix"
 
 ## Known Issues
 
 - **BetaFPV Flight Controllers**: Some models report 0V for RxBt, which will display as "0.0V"
-- **Icon Dependencies**: The Dashboard requires icon files from BattWidget, ClockWidget, and GPSWidget
+- **Icon Dependencies**: Requires shared icon assets from `/WIDGETS/common/icons/`
 
 ## Troubleshooting
 
 - **No RX telemetry displayed**: Ensure your receiver is bound and powered, and TPWR sensor is available
-- **Missing icons**: Verify BattWidget, ClockWidget, and GPSWidget folders are present with their BMP subfolders
+- **Missing icons**: Verify `/WIDGETS/common/icons/` exists with battery, connection, and satellite icons
 - **GPS not working**: Check that GPS sensor is discovered in telemetry and has valid satellite lock
 - **Common folder error**: Ensure `/WIDGETS/common/utils.lua` exists on your SD card

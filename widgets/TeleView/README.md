@@ -131,7 +131,7 @@ The widget will automatically detect available telemetry and adjust the display 
 ## Compatibility
 
 - **EdgeTX Version**: 2.10.5+ (tested with 2.10.5, 2.11.1, 3.0.0)
-- **Screen**: Color screen transmitters (RadioMaster TX16S, TX15, Jumper T15, Jumper T20, etc.)
+ - **Screen**: Color screen transmitters (TX15, Jumper T15, TX16)
 - **Receiver Telemetry**: ExpressLRS, Crossfire, or any CRSF-compatible system
 
 ## Testing
