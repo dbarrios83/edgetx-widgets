@@ -164,11 +164,12 @@ end
 local function drawSatsBelowRx(widget, xCenter, yStart, tlm, rightColLeft)
   local sats = (tlm and tonumber(tlm.sats)) or 0
   local gpsValue = getValue("GPS")
-  local latVal = (type(gpsValue) == "table" and gpsValue.lat) or 0
-  local lonVal = (type(gpsValue) == "table" and gpsValue.lon) or 0
-  
-  -- GPS is valid if we have a GPS table (GPS module is present)
-  local isValid = (type(gpsValue) == "table")
+  local hasGpsTable = (type(gpsValue) == "table")
+  local latVal = (hasGpsTable and gpsValue.lat) or 0
+  local lonVal = (hasGpsTable and gpsValue.lon) or 0
+
+  -- Require a real GPS table and non-zero coordinates before showing as valid
+  local isValid = hasGpsTable and not ((latVal or 0) == 0 and (lonVal or 0) == 0)
 
   if isValid then
     widget.gpsLat = latVal
@@ -246,7 +247,7 @@ end
 -- Coordinates (centered pair, consistent style)
 -- -----------------------
 local function drawGpsCoordinates(widget, yTop)
-  if not widget then return end
+  if not widget or not widget.gpsValid then return end
 
   local z = widget.zone or { x = 0, y = 0, w = 320, h = 240 }
   local cx = (z.x or 0) + math.floor((z.w or 320) / 2)
