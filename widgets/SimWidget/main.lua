@@ -1,4 +1,4 @@
-﻿-- Unified Sim Widget: Combines SimModel and SimStick functionality
+-- Unified Sim Widget: Combines SimModel and SimStick functionality
 -- Displays model info, battery, date/time, and stick positions
 
 local utils = loadScript("/WIDGETS/common/utils.lua")()
