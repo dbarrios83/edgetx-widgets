@@ -11,6 +11,90 @@ local options = {
   { "ShowTimers", BOOL, 1 },
 }
 
+-- =========================
+-- ELRS Version Helper (CRSF device info)
+-- State lives in widget.elrs
+-- =========================
+local elrs = {}
+
+local function elrs_fieldGetString(data, off)
+  local startOff = off
+  while off <= #data and data[off] ~= 0 do
+    data[off] = string.char(data[off])
+    off = off + 1
+  end
+  return table.concat(data, nil, startOff, off - 1), off + 1
+end
+
+local function elrs_parseDeviceInfo(state, data)
+  -- Keep identical to your working code: only accept TX info (0xEE)
+  if not data or data[2] ~= 0xEE then return false end
+
+  local name, off = elrs_fieldGetString(data, 3)
+  state.mod.name = name or "ELRS"
+
+  state.mod.vMaj = data[off + 9]
+  state.mod.vMin = data[off + 10]
+  state.mod.vRev = data[off + 11]
+
+  if type(state.mod.vMaj) ~= "number"
+     or type(state.mod.vMin) ~= "number"
+     or type(state.mod.vRev) ~= "number" then
+    state.mod.vStr = state.mod.name
+    return true
+  end
+
+  state.mod.vStr = string.format("%s (%d.%d.%d)",
+    state.mod.name,
+    state.mod.vMaj,
+    state.mod.vMin,
+    state.mod.vRev
+  )
+
+  return true
+end
+
+function elrs.init(state)
+  state.mod = {}
+  state.lastUpd = 0
+  state.done = false
+end
+
+function elrs.update(state)
+  if not state or state.done then return end
+  if not crossfireTelemetryPop or not crossfireTelemetryPush then return end
+
+  local command, data = crossfireTelemetryPop()
+  if command == 0x29 then
+    if elrs_parseDeviceInfo(state, data) then
+      state.done = true
+      state.lastUpd = 0
+    end
+    return
+  end
+
+  local now = getTime()
+  if (state.lastUpd or 0) + 100 < now then
+    crossfireTelemetryPush(0x28, {0x00, 0xEA})
+    state.lastUpd = now
+  end
+end
+
+function elrs.getString(state)
+  return (state and state.mod and state.mod.vStr) or "ELRS"
+end
+
+local function drawElrsVersion(widget)
+  local z = widget.zone or { x = 0, y = 0, w = 320, h = 240 }
+  local xLeft = z.x + 5
+  local yBottom = z.y + z.h - 18
+  local verStr = elrs.getString(widget.elrs)
+  utils.text(xLeft, yBottom, verStr, utils.S.left, utils.S.sml, 0)
+end
+
+-- -----------------------
+-- create / update
+-- -----------------------
 local function create(zone, options)
   local battIconPath = "/WIDGETS/common/icons/battery-%s.png"
   local connIconPath = "/WIDGETS/common/icons/connection-%s.png"
@@ -40,17 +124,26 @@ local function create(zone, options)
     ele = (getFieldInfo('ele') or {}).id,
   }
 
-  return {
+  local widget = {
     zone = zone,
     cfg = options or {},
     icons = icons,
     stick = stick,
+
+    -- ELRS state per widget instance
+    elrs = { mod = {}, lastUpd = 0, done = false },
+
     gpsLat = 0,
     gpsLon = 0,
     gpsValid = false,
+    lastFixLat = nil,
+    lastFixLon = nil,
     tlm = nil,
     lastTpwr = 0,
   }
+
+  elrs.init(widget.elrs)
+  return widget
 end
 
 local function update(widget, options)
@@ -165,30 +258,34 @@ local function drawSatsBelowRx(widget, xCenter, yStart, tlm, rightColLeft)
   local sats = (tlm and tonumber(tlm.sats)) or 0
   local gpsValue = getValue("GPS")
   local hasGpsTable = (type(gpsValue) == "table")
-  local latVal = (hasGpsTable and gpsValue.lat) or 0
-  local lonVal = (hasGpsTable and gpsValue.lon) or 0
-
-  -- Require a real GPS table and non-zero coordinates before showing as valid
-  local isValid = hasGpsTable and not ((latVal or 0) == 0 and (lonVal or 0) == 0)
-
-  if isValid then
-    widget.gpsLat = latVal
-    widget.gpsLon = lonVal
-    widget.gpsValid = true
-  else
-    widget.gpsValid = false
-  end
-
+  
   local baseY = utils.getBaseY(yStart, baseYOffset)
   local rowY  = baseY + 2 * lineHeight
   local textX = utils.clampToRightCol(xCenter + xOffset, rightColLeft)
 
-  if not widget.gpsValid then
-    local msg = ((widget.gpsLat or 0) == 0 and (widget.gpsLon or 0) == 0) and "No GPS" or "Last GPS fix"
-    utils.text(textX, rowY, msg, utils.S.left, utils.S.mid, 0)
+  -- If no GPS table, show "No GPS"
+  if not hasGpsTable then
+    widget.gpsValid = false
+    utils.text(textX, rowY, "No GPS", utils.S.left, utils.S.mid, 0)
     return
   end
+  
+  -- GPS table exists - extract coordinates
+  local latVal = (type(gpsValue.lat) == "number") and gpsValue.lat or 0
+  local lonVal = (type(gpsValue.lon) == "number") and gpsValue.lon or 0
+  
+  -- Cache coordinates and mark as valid (GPS table exists)
+  widget.gpsLat = latVal
+  widget.gpsLon = lonVal
+  widget.gpsValid = true
 
+  -- Update last non-zero fix
+  if not (latVal == 0 and lonVal == 0) then
+    widget.lastFixLat = latVal
+    widget.lastFixLon = lonVal
+  end
+
+  -- Always show satellite count if GPS table exists
   local color = utils.satIconColor(sats)
   local icon = (color == "red" and widget.icons and widget.icons.sat_red)
            or  (color == "yellow" and widget.icons and widget.icons.sat_yellow)
@@ -199,7 +296,7 @@ local function drawSatsBelowRx(widget, xCenter, yStart, tlm, rightColLeft)
 end
 
 -- -----------------------
--- RX details grid (secondary typography)
+-- RX details grid
 -- -----------------------
 local function drawRxDetailGrid(widget, z, yTop, tlm)
   local rfmd  = (tlm and tlm.rfmd) or 0
@@ -230,9 +327,9 @@ local function drawRxDetailGrid(widget, z, yTop, tlm)
   local A = utils.S.left
   local SZ = utils.S.sml
 
-  utils.text(col1X + 5, gridY,           string.format("CUR: %.2fA", curr), A, SZ, 0)
-  utils.text(col2X + 5, gridY,           string.format("Power: %dmW", tpwr), A, SZ, 0)
-  utils.text(col3X + 5, gridY,           "FMODE: " .. fmodeStr, A, SZ, 0)
+  utils.text(col1X + 5, gridY,             string.format("CUR: %.2fA", curr), A, SZ, 0)
+  utils.text(col2X + 5, gridY,             string.format("Power: %dmW", tpwr), A, SZ, 0)
+  utils.text(col3X + 5, gridY,             "FMODE: " .. fmodeStr, A, SZ, 0)
   if rssi1 ~= 0 then utils.text(col4X + 5, gridY, string.format("RSSI1: %ddBm", rssi1), A, SZ, 0) end
 
   utils.text(col1X + 5, gridY + rowHeight, string.format("CAP: %dmAh", capa), A, SZ, 0)
@@ -244,7 +341,7 @@ local function drawRxDetailGrid(widget, z, yTop, tlm)
 end
 
 -- -----------------------
--- Coordinates (centered pair, consistent style)
+-- Coordinates
 -- -----------------------
 local function drawGpsCoordinates(widget, yTop)
   if not widget or not widget.gpsValid then return end
@@ -262,10 +359,10 @@ end
 local function drawSticks(widget, z, yCenter)
   local axis = 45
   local centerX = z.x + math.floor(z.w / 2)
-  local leftX  = centerX - 90
-  local rightX = centerX + 90
+  local leftX  = centerX - 110
+  local rightX = centerX + 110
 
-  local function drawAxesAndDot(cx, cy, idX, idY)
+  local function drawAxesAndDot(cx, cy, idX, idY, side)
     for i = -1, 1 do
       lcd.drawLine(cx - axis, cy + i, cx + axis, cy + i, SOLID, WHITE)
       lcd.drawLine(cx + i, cy - axis, cx + i, cy + axis, SOLID, WHITE)
@@ -276,12 +373,23 @@ local function drawSticks(widget, z, yCenter)
     local px = math.floor(cx + (vx / 1024) * axis + 0.5)
     local py = math.floor(cy - (vy / 1024) * axis + 0.5)
 
+    local vxPercent = math.floor((vx / 1024) * 100 + 0.5)
+    local vyPercent = math.floor((vy / 1024) * 100 + 0.5)
+
     utils.drawSquare(cx, cy, 3, GREY, WHITE)
     utils.drawSquare(px, py, 4, GREEN, WHITE)
+
+    if side == "left" then
+      utils.text(cx - axis - 43, cy - 5, string.format("R:%d", vxPercent), utils.S.left, utils.S.sml, 0)
+      utils.text(cx - 18, cy - axis - 18, string.format("T:%d", vyPercent), utils.S.left, utils.S.sml, 0)
+    else
+      utils.text(cx - axis - 43, cy - 5, string.format("A:%d", vxPercent), utils.S.left, utils.S.sml, 0)
+      utils.text(cx - 18, cy - axis - 18, string.format("E:%d", vyPercent), utils.S.left, utils.S.sml, 0)
+    end
   end
 
-  drawAxesAndDot(leftX,  yCenter, widget.stick.rud, widget.stick.thr)
-  drawAxesAndDot(rightX, yCenter, widget.stick.ail, widget.stick.ele)
+  drawAxesAndDot(leftX,  yCenter, widget.stick.rud, widget.stick.thr, "left")
+  drawAxesAndDot(rightX, yCenter, widget.stick.ail, widget.stick.ele, "right")
 end
 
 -- -----------------------
@@ -311,7 +419,7 @@ local function updateTelemetryCache(widget, tpwr, justConnected, justDisconnecte
   widget.tlm.tpwr  = tpwr
   widget.tlm.curr  = tonumber(getValue("Curr")) or 0
   widget.tlm.capa  = tonumber(getValue("Capa")) or 0
-    widget.tlm.sats  = tonumber(getValue("Sats")) or 0
+  widget.tlm.sats  = tonumber(getValue("Sats")) or 0
   widget.tlm.rxbt  = tonumber(getValue("RxBt")) or 0
   widget.tlm.rqly  = tonumber(getValue("RQly")) or 0
 end
@@ -334,11 +442,11 @@ local function refresh(widget)
   local yStart = z.y + 5
   local xRight = z.x + z.w - 10
 
-  -- Reserve top-right column for Date/Time/Timers to prevent overlap
+  -- Update ELRS version (works even without RX, as long as CRSF device info is available)
+  elrs.update(widget.elrs)
+
   local rightColW = 95
   local rightColLeft = xRight - rightColW
-
-  -- Center telemetry should live in the area LEFT of the right column
   local xCenter = z.x + math.floor((rightColLeft - z.x) / 2)
 
   drawModelName(xLeft, yStart)
@@ -361,20 +469,43 @@ local function refresh(widget)
     drawRxBatteryBelowLq(widget, xCenter, yStart, widget.tlm, rightColLeft)
     drawSatsBelowRx(widget, xCenter, yStart, widget.tlm, rightColLeft)
 
-    local gridY = yStart + 120
+    -- Coordinates just below Sats
+    local baseY = utils.getBaseY(yStart, baseYOffset)
+    local coordsY = baseY + 3 * lineHeight
+    if widget.cfg.ShowCoordinates == 1 then
+      drawGpsCoordinates(widget, coordsY)
+    end
+
+    -- Grid below coordinates (or just below sats if coords hidden)
+    local gridY
+    if widget.cfg.ShowCoordinates == 1 then
+      gridY = coordsY + 25
+    else
+      gridY = baseY + 3 * lineHeight + 15
+    end
     if widget.cfg.ShowRxDetails == 1 then
       drawRxDetailGrid(widget, z, gridY, widget.tlm)
     end
-
-    local gpsY = gridY + 50
-    if widget.cfg.ShowCoordinates == 1 then
-      drawGpsCoordinates(widget, gpsY)
-    end
   else
     utils.text(xCenter + 40, yStart + 5, "No RX telemetry", utils.S.left, 0, 0)
+
+    -- If we have a last GPS fix, show it as last location with label and larger coords
+    if widget.cfg.ShowCoordinates == 1 and widget.lastFixLat and widget.lastFixLon then
+      widget.gpsLat = widget.lastFixLat
+      widget.gpsLon = widget.lastFixLon
+      widget.gpsValid = true
+      local baseY = utils.getBaseY(yStart, baseYOffset)
+      local coordsY = baseY + 3 * lineHeight
+      local z = widget.zone or { x = 0, y = 0, w = 320, h = 240 }
+      local cx = (z.x or 0) + math.floor((z.w or 320) / 2)
+      -- Label above (smaller than coords)
+      lcd.drawText(cx, coordsY - 18, "Last location", WHITE + SHADOWED + CENTER)
+      -- Larger coordinates
+      local latStr, lonStr = utils.formatLatLon(widget.gpsLat, widget.gpsLon)
+      utils.textLR(cx, coordsY, "Lat: " .. latStr, "Lon: " .. lonStr, 10, utils.S.base, utils.S.small, 0)
+    end
   end
 
-  -- Right column: Date/time + timers
   drawDateTime(widget, xRight, yStart)
 
   if widget.cfg.ShowTimers == 1 then
@@ -387,14 +518,14 @@ local function refresh(widget)
     end
   end
 
-  -- Sticks
   local axisCenterOffset = 45
-  local bottomMargin = 20
+  local bottomMargin = 25
   local sticksY = z.y + z.h - axisCenterOffset - bottomMargin
   if widget.cfg.ShowSticks == 1 then
     drawSticks(widget, z, sticksY)
   end
 
+  drawElrsVersion(widget)
   drawOsVersionBottomRight(widget)
 end
 

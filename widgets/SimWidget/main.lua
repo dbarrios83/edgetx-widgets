@@ -1,4 +1,4 @@
--- Unified Sim Widget: Combines SimModel and SimStick functionality
+﻿-- Unified Sim Widget: Combines SimModel and SimStick functionality
 -- Displays model info, battery, date/time, and stick positions
 
 local utils = loadScript("/WIDGETS/common/utils.lua")()
@@ -100,10 +100,10 @@ local function drawSticksChart(widget)
     local centerX = widget.zone.x + math.floor(widget.zone.w / 2)
     local centerY = widget.zone.y + math.floor(widget.zone.h / 2) + 10
     
-    local leftX = centerX - 90
-    local rightX = centerX + 90
+    local leftX = centerX - 110
+    local rightX = centerX + 110
 
-    local function drawAxesAndDot(cx, cy, idX, idY)
+    local function drawAxesAndDot(cx, cy, idX, idY, labelX, labelY, side)
         for i = -1, 1 do
             lcd.drawLine(cx - axis, cy + i, cx + axis, cy + i, SOLID, WHITE)
             lcd.drawLine(cx + i, cy - axis, cx + i, cy + axis, SOLID, WHITE)
@@ -113,12 +113,27 @@ local function drawSticksChart(widget)
         local px = math.floor(cx + (vx / 1024) * axis + 0.5)
         local py = math.floor(cy - (vy / 1024) * axis + 0.5)
         
+        -- Convert to -100 to 100 range
+        local vxPercent = math.floor((vx / 1024) * 100 + 0.5)
+        local vyPercent = math.floor((vy / 1024) * 100 + 0.5)
+        
         utils.drawSquare(cx, cy, 3, GREY, WHITE)
         utils.drawSquare(px, py, 4, GREEN, WHITE)
+        
+        -- Draw stick values
+        if side == "left" then
+            -- Left stick: R (horizontal) below, T (vertical) above
+            utils.text(cx - axis - 43, cy - 5, string.format("R:%d", vxPercent), utils.S.left, utils.S.sml, 0)
+            utils.text(cx - 18, cy - axis - 18, string.format("T:%d", vyPercent), utils.S.left, utils.S.sml, 0)
+        else
+            -- Right stick: A (horizontal) below, E (vertical) above
+            utils.text(cx - axis - 43, cy - 5, string.format("A:%d", vxPercent), utils.S.left, utils.S.sml, 0)
+            utils.text(cx - 18, cy - axis - 18, string.format("E:%d", vyPercent), utils.S.left, utils.S.sml, 0)
+        end
     end
 
-    drawAxesAndDot(leftX, centerY, sticks[2].idX, sticks[2].idY)
-    drawAxesAndDot(rightX, centerY, sticks[1].idX, sticks[1].idY)
+    drawAxesAndDot(leftX, centerY, sticks[2].idX, sticks[2].idY, "R", "T", "left")
+    drawAxesAndDot(rightX, centerY, sticks[1].idX, sticks[1].idY, "A", "E", "right")
 end
 
 local function refresh(widget, event, touchState)
