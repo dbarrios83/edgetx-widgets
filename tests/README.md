@@ -181,7 +181,6 @@ widget.refresh(widget, {})
 
 ## Documentation
 
-- [../docs/TESTING.md](../docs/TESTING.md) - Comprehensive testing guide
 - [../docs/TELEMETRY_GUIDE.md](../docs/TELEMETRY_GUIDE.md) - Telemetry variables and profiles
 - [../docs/COMPANION_SIMULATOR_GUIDE.md](../docs/COMPANION_SIMULATOR_GUIDE.md) - Companion simulator integration
 
@@ -203,8 +202,6 @@ widget.refresh(widget, {})
 2. Update telemetry profiles in `utils/telemetry_simulator.lua` if needed
 
 3. Add test to runner scripts (`run_tests.bat`, `run_tests.sh`)
-
-4. Document scenarios in `../docs/TESTING.md`
 
 ## Troubleshooting
 

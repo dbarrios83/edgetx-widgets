@@ -142,8 +142,7 @@ Linux/Mac:
 
 ### Test Documentation
 
-- [tests/README.md](tests/README.md) - Complete testing guide
-- [docs/TESTING.md](docs/TESTING.md) - Detailed testing scenarios
+- [tests/README.md](tests/README.md) - Complete testing guide with 63 tests
 - [docs/TELEMETRY_GUIDE.md](docs/TELEMETRY_GUIDE.md) - Telemetry variable reference
 - [docs/COMPANION_SIMULATOR_GUIDE.md](docs/COMPANION_SIMULATOR_GUIDE.md) - Companion simulator integration
 
